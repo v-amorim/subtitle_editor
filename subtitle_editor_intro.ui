@@ -35,7 +35,7 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0" alignment="Qt::AlignHCenter">
-    <widget class="QLabel" name="intro_label">
+    <widget class="QLabel" name="IntroLabel_qL">
      <property name="font">
       <font>
        <pointsize>10</pointsize>
@@ -48,7 +48,7 @@ Click 'Open' to load a subtitle file.</string>
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="QPushButton" name="open_button">
+    <widget class="QPushButton" name="OpenButton_qPB">
      <property name="text">
       <string>Open Subtitle file</string>
      </property>

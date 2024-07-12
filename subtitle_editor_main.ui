@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>MainWindow_qMW</class>
+ <widget class="QMainWindow" name="MainWindow_qMW">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -21,10 +21,10 @@
   <property name="statusTip">
    <string/>
   </property>
-  <widget class="QWidget" name="central_widget">
-   <layout class="QGridLayout" name="gridLayout_2">
+  <widget class="QWidget" name="CentralWidget_qW">
+   <layout class="QGridLayout" name="CentralWidgetGridLayout_qGL">
     <item row="0" column="0">
-     <layout class="QGridLayout" name="grid_layout">
+     <layout class="QGridLayout" name="MainGridLayout_qGL">
       <property name="leftMargin">
        <number>10</number>
       </property>
@@ -35,7 +35,7 @@
        <number>10</number>
       </property>
       <item row="0" column="0" colspan="4">
-       <widget class="QSpinBox" name="subtitle_number_spinbox">
+       <widget class="QSpinBox" name="SubtitleNumberSpinBox_qSB">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -63,7 +63,7 @@
        </widget>
       </item>
       <item row="3" column="1" colspan="2">
-       <widget class="QLineEdit" name="search_entry">
+       <widget class="QLineEdit" name="SearchEntry_qLE">
         <property name="statusTip">
          <string>Find subtitles containing the [Entered Text]</string>
         </property>
@@ -76,7 +76,7 @@
        </widget>
       </item>
       <item row="3" column="3">
-       <widget class="QLineEdit" name="end_time_entry">
+       <widget class="QLineEdit" name="EndTimeEntry_qLE">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -101,7 +101,7 @@
        </widget>
       </item>
       <item row="3" column="0">
-       <widget class="QLineEdit" name="start_time_entry">
+       <widget class="QLineEdit" name="StartTimeEntry_qLE">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -123,7 +123,7 @@
        </widget>
       </item>
       <item row="5" column="2" colspan="2">
-       <widget class="QPushButton" name="save_button">
+       <widget class="QPushButton" name="SaveButton_qPB">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -148,7 +148,7 @@
        </widget>
       </item>
       <item row="5" column="0" colspan="2">
-       <widget class="QPushButton" name="overwrite_button">
+       <widget class="QPushButton" name="OverwriteButton_qPB">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -173,7 +173,7 @@
        </widget>
       </item>
       <item row="4" column="0" colspan="4">
-       <widget class="QPushButton" name="search_button">
+       <widget class="QPushButton" name="SearchButton_qPB">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -198,7 +198,7 @@
        </widget>
       </item>
       <item row="6" column="0" colspan="4">
-       <widget class="QPushButton" name="close_button">
+       <widget class="QPushButton" name="CloseButton_qPB">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -223,7 +223,7 @@
        </widget>
       </item>
       <item row="2" column="0" colspan="4">
-       <widget class="QPlainTextEdit" name="subtitle_text">
+       <widget class="QPlainTextEdit" name="SubtitleText_qPTE">
         <property name="font">
          <font>
           <pointsize>12</pointsize>
@@ -241,7 +241,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QMenuBar" name="menubar">
+  <widget class="QMenuBar" name="MenuBar_qMB">
    <property name="geometry">
     <rect>
      <x>0</x>
@@ -250,20 +250,20 @@
      <height>21</height>
     </rect>
    </property>
-   <widget class="QMenu" name="file_menu">
+   <widget class="QMenu" name="FileMenu_qM">
     <property name="statusTip">
      <string>Menu with file options</string>
     </property>
     <property name="title">
      <string>Menu</string>
     </property>
-    <addaction name="open_action"/>
-    <addaction name="save_action"/>
-    <addaction name="overwrite_action"/>
+    <addaction name="OpenAction_qA"/>
+    <addaction name="SaveAction_qA"/>
+    <addaction name="OverwriteAction_qA"/>
     <addaction name="separator"/>
-    <addaction name="close_action"/>
+    <addaction name="CloseAction_qA"/>
    </widget>
-   <widget class="QMenu" name="symbols_menu">
+   <widget class="QMenu" name="SymbolsMenu_qM">
     <property name="toolTip">
      <string/>
     </property>
@@ -279,16 +279,16 @@
     <property name="title">
      <string>Symbols</string>
     </property>
-    <addaction name="em_dash_action"/>
-    <addaction name="elipsis_action"/>
-    <addaction name="eight_note_action"/>
-    <addaction name="italics_action"/>
+    <addaction name="EmDashAction_qA"/>
+    <addaction name="EllipsisAction_qA"/>
+    <addaction name="EighthNoteAction_qA"/>
+    <addaction name="ItalicsAction_qA"/>
    </widget>
-   <addaction name="file_menu"/>
-   <addaction name="symbols_menu"/>
+   <addaction name="FileMenu_qM"/>
+   <addaction name="SymbolsMenu_qM"/>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
-  <action name="open_action">
+  <widget class="QStatusBar" name="StatusBar_qSB"/>
+  <action name="OpenAction_qA">
    <property name="text">
     <string>Open</string>
    </property>
@@ -299,7 +299,7 @@
     <string>Ctrl+O</string>
    </property>
   </action>
-  <action name="save_action">
+  <action name="SaveAction_qA">
    <property name="text">
     <string>Save</string>
    </property>
@@ -310,7 +310,7 @@
     <string>Ctrl+S</string>
    </property>
   </action>
-  <action name="overwrite_action">
+  <action name="OverwriteAction_qA">
    <property name="text">
     <string>Overwrite</string>
    </property>
@@ -321,7 +321,7 @@
     <string>Ctrl+Shift+S</string>
    </property>
   </action>
-  <action name="close_action">
+  <action name="CloseAction_qA">
    <property name="text">
     <string>Close</string>
    </property>
@@ -332,7 +332,7 @@
     <string>Ctrl+Q</string>
    </property>
   </action>
-  <action name="em_dash_action">
+  <action name="EmDashAction_qA">
    <property name="text">
     <string>—</string>
    </property>
@@ -340,7 +340,7 @@
     <string>Inserts a [—] at the current cursor location</string>
    </property>
   </action>
-  <action name="elipsis_action">
+  <action name="EllipsisAction_qA">
    <property name="text">
     <string>…</string>
    </property>
@@ -348,7 +348,7 @@
     <string> Inserts a […] at the current cursor location</string>
    </property>
   </action>
-  <action name="eight_note_action">
+  <action name="EighthNoteAction_qA">
    <property name="text">
     <string>♪</string>
    </property>
@@ -361,7 +361,7 @@
     <string>♫</string>
    </property>
   </action>
-  <action name="italics_action">
+  <action name="ItalicsAction_qA">
    <property name="text">
     <string>Italics</string>
    </property>
@@ -371,13 +371,9 @@
   </action>
  </widget>
  <tabstops>
-  <tabstop>subtitle_text</tabstop>
-  <tabstop>search_entry</tabstop>
-  <tabstop>subtitle_number_spinbox</tabstop>
-  <tabstop>search_button</tabstop>
-  <tabstop>save_button</tabstop>
-  <tabstop>overwrite_button</tabstop>
-  <tabstop>close_button</tabstop>
+  <tabstop>SubtitleText_qPTE</tabstop>
+  <tabstop>SearchEntry_qLE</tabstop>
+  <tabstop>SubtitleNumberSpinBox_qSB</tabstop>
  </tabstops>
  <resources/>
  <connections/>

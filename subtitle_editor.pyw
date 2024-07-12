@@ -3,6 +3,7 @@ from __future__ import annotations
 import sys
 import tempfile
 from contextlib import ExitStack
+from os import chdir
 from pathlib import Path
 
 from PyQt6 import uic
@@ -19,7 +20,14 @@ from PyQt6.QtWidgets import (
     QMessageBox,
 )
 
+CURRENT_DIR = Path(__file__).resolve().parent
+UI_FILE_MAIN = CURRENT_DIR / "subtitle_editor_main.ui"
+UI_FILE_INTRO = CURRENT_DIR / "subtitle_editor_intro.ui"
 INITIAL_INDEX = -1
+
+chdir(CURRENT_DIR)
+
+print("Current working directory:", Path.cwd())
 
 
 class SyntaxHighlighter(QSyntaxHighlighter):
@@ -60,16 +68,16 @@ class SyntaxHighlighter(QSyntaxHighlighter):
 class IntroDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
-        uic.loadUi("subtitle_editor_intro.ui", self)
+        uic.loadUi(UI_FILE_INTRO, self)
 
     def open_button_clicked(self, callback):
-        self.open_button.clicked.connect(callback)
+        self.OpenButton_qPB.clicked.connect(callback)
 
 
 class SubtitleEditor(QMainWindow):
     def __init__(self, subtitle_path=None):
         super().__init__()
-        self.subtitles = []
+        self.subtitles_list = []
         self.current_subtitle_index = 0
         self.last_found_index = INITIAL_INDEX
         self.temp_file = tempfile.NamedTemporaryFile(delete=False, mode="w", encoding="utf-8")
@@ -86,38 +94,38 @@ class SubtitleEditor(QMainWindow):
             self.intro_dialog.exec()
 
     def init_ui(self):
-        uic.loadUi("subtitle_editor_main.ui", self)
+        uic.loadUi(UI_FILE_MAIN, self)
 
         # Connect the existing menu actions to their respective slots
-        self.open_action.triggered.connect(self.open_file)
-        self.save_action.triggered.connect(self.save_file)
-        self.overwrite_action.triggered.connect(self.overwrite_subtitle_file)
-        self.close_action.triggered.connect(self.close)
+        self.OpenAction_qA.triggered.connect(self.open_file)
+        self.SaveAction_qA.triggered.connect(self.save_file)
+        self.OverwriteAction_qA.triggered.connect(self.overwrite_subtitle_file)
+        self.CloseAction_qA.triggered.connect(self.close)
 
         # Connect the existing Symbols actions to their respective slots
-        self.em_dash_action.triggered.connect(self.insert_em_dash)
-        self.elipsis_action.triggered.connect(self.insert_elipsis)
-        self.eight_note_action.triggered.connect(self.insert_eight_note)
-        self.italics_action.triggered.connect(self.insert_italics)
+        self.EmDashAction_qA.triggered.connect(self.insert_em_dash)
+        self.EllipsisAction_qA.triggered.connect(self.insert_elipsis)
+        self.EighthNoteAction_qA.triggered.connect(self.insert_eight_note)
+        self.ItalicsAction_qA.triggered.connect(self.insert_italics)
 
         # Connect signals and slots
-        self.subtitle_number_spinbox.valueChanged.connect(self.subtitle_number_changed)
-        self.subtitle_number_spinbox.setKeyboardTracking(False)
-        self.subtitle_text.textChanged.connect(self.update_subtitle_text)
-        self.subtitle_text.wheelEvent = self.subtitle_text_wheel_event
-        self.start_time_entry.editingFinished.connect(self.update_start_time)
-        self.search_entry.returnPressed.connect(self.search_subtitle)
-        self.search_entry.textChanged.connect(self.search_entry_changed)
-        self.search_button.clicked.connect(self.search_subtitle)
-        self.end_time_entry.editingFinished.connect(self.update_end_time)
-        self.save_button.clicked.connect(self.save_file)
-        self.close_button.clicked.connect(self.close)
+        self.SubtitleNumberSpinBox_qSB.valueChanged.connect(self.subtitle_number_changed)
+        self.SubtitleNumberSpinBox_qSB.setKeyboardTracking(False)
+        self.SubtitleText_qPTE.textChanged.connect(self.update_subtitle_text)
+        self.SubtitleText_qPTE.wheelEvent = self.subtitle_text_wheel_event
+        self.StartTimeEntry_qLE.editingFinished.connect(self.update_start_time)
+        self.SearchEntry_qLE.returnPressed.connect(self.search_subtitle)
+        self.SearchEntry_qLE.textChanged.connect(self.search_entry_changed)
+        self.SearchButton_qPB.clicked.connect(self.search_subtitle)
+        self.EndTimeEntry_qLE.editingFinished.connect(self.update_end_time)
+        self.SaveButton_qPB.clicked.connect(self.save_file)
+        self.CloseButton_qPB.clicked.connect(self.close)
 
-        # Connect overwrite_button to overwrite_subtitle_file method
-        self.overwrite_button.clicked.connect(self.overwrite_subtitle_file)
+        # Connect OverwriteButton_qPB to overwrite_subtitle_file method
+        self.OverwriteButton_qPB.clicked.connect(self.overwrite_subtitle_file)
 
         # Initialize SyntaxHighlighter
-        self.highlighter = SyntaxHighlighter(self.subtitle_text.document())
+        self.highlighter = SyntaxHighlighter(self.SubtitleText_qPTE.document())
 
     def open_file(self):
         file_dialog = QFileDialog()
@@ -127,8 +135,8 @@ class SubtitleEditor(QMainWindow):
             self.intro_dialog.close()
 
     def load_subtitles(self, file_path):
-        self.subtitles = []
-        self.subtitle_path = file_path  # Store the path of the currently open subtitle file
+        self.subtitles_list = []
+        self.current_subtitle_path = file_path
 
         with Path(file_path).open(encoding="utf-8") as file:
             subtitle_lines = file.readlines()
@@ -137,7 +145,7 @@ class SubtitleEditor(QMainWindow):
                 line = raw_line.strip()
                 if line.isdigit():
                     if subtitle_data:
-                        self.subtitles.append(subtitle_data)
+                        self.subtitles_list.append(subtitle_data)
                     subtitle_data = {"number": int(line), "text": ""}
                 elif "-->" in line:
                     times = line.split("-->")
@@ -149,17 +157,17 @@ class SubtitleEditor(QMainWindow):
                     else:
                         subtitle_data["text"] = line
             if subtitle_data:
-                self.subtitles.append(subtitle_data)
+                self.subtitles_list.append(subtitle_data)
 
-        if self.subtitles:
-            self.subtitle_number_spinbox.setMaximum(len(self.subtitles))
-            self.subtitle_number_spinbox.setSuffix(f" / {len(self.subtitles)}")
+        if self.subtitles_list:
+            self.SubtitleNumberSpinBox_qSB.setMaximum(len(self.subtitles_list))
+            self.SubtitleNumberSpinBox_qSB.setSuffix(f" / {len(self.subtitles_list)}")
             self.current_subtitle_index = 0
             self.display_subtitle()
 
     def save_to_temp_file(self):
         with Path(self.temp_file.name).open("w", encoding="utf-8") as temp_file:
-            for subtitle in self.subtitles:
+            for subtitle in self.subtitles_list:
                 temp_file.write(f"{subtitle['number']}\n")
                 temp_file.write(f"{subtitle['start_time']} --> {subtitle['end_time']}\n")
                 temp_file.write(f"{subtitle['text']}\n\n")
@@ -173,7 +181,7 @@ class SubtitleEditor(QMainWindow):
                 file.write(temp_file.read())
 
     def overwrite_subtitle_file(self):
-        if not self.subtitles:
+        if not self.subtitles_list:
             QMessageBox.warning(self, "No Subtitles", "There are no subtitles loaded to overwrite.")
             return
 
@@ -199,23 +207,23 @@ class SubtitleEditor(QMainWindow):
         # Copy the temporary file contents to the original subtitle file
         with ExitStack() as stack:
             temp_file = stack.enter_context(Path(save_path).open("r", encoding="utf-8"))
-            original_file = stack.enter_context(Path(self.subtitle_path).open("w", encoding="utf-8"))
+            original_file = stack.enter_context(Path(self.current_subtitle_path).open("w", encoding="utf-8"))
             original_file.write(temp_file.read())
 
         QMessageBox.information(self, "Overwrite Complete", "Subtitle file has been successfully overwritten.")
 
     def display_subtitle(self):
-        if 0 <= self.current_subtitle_index < len(self.subtitles):
-            subtitle = self.subtitles[self.current_subtitle_index]
-            self.subtitle_number_spinbox.setValue(subtitle["number"])
-            self.subtitle_text.setPlainText(subtitle["text"])
-            self.start_time_entry.setText(subtitle["start_time"])
-            self.end_time_entry.setText(subtitle["end_time"])
+        if 0 <= self.current_subtitle_index < len(self.subtitles_list):
+            subtitle = self.subtitles_list[self.current_subtitle_index]
+            self.SubtitleNumberSpinBox_qSB.setValue(subtitle["number"])
+            self.SubtitleText_qPTE.setPlainText(subtitle["text"])
+            self.StartTimeEntry_qLE.setText(subtitle["start_time"])
+            self.EndTimeEntry_qLE.setText(subtitle["end_time"])
             self.highlight_search_term()
 
     def subtitle_number_changed(self):
-        desired_subtitle_number = self.subtitle_number_spinbox.value()
-        for index, subtitle in enumerate(self.subtitles):
+        desired_subtitle_number = self.SubtitleNumberSpinBox_qSB.value()
+        for index, subtitle in enumerate(self.subtitles_list):
             if subtitle["number"] == desired_subtitle_number:
                 self.current_subtitle_index = index
                 self.display_subtitle()
@@ -223,14 +231,14 @@ class SubtitleEditor(QMainWindow):
         QMessageBox.information(self, "Subtitle Not Found", f"Subtitle {desired_subtitle_number} not found.")
 
     def search_subtitle(self):
-        search_text = self.search_entry.text().lower()
+        search_text = self.SearchEntry_qLE.text().lower()
         if not search_text:
             QMessageBox.warning(self, "Empty Search", "Please enter text to search.")
             return
 
         found_index = INITIAL_INDEX
-        for index in range(self.last_found_index + 1, len(self.subtitles)):
-            if search_text in self.subtitles[index]["text"].lower():
+        for index in range(self.last_found_index + 1, len(self.subtitles_list)):
+            if search_text in self.subtitles_list[index]["text"].lower():
                 found_index = index
                 break
 
@@ -243,33 +251,33 @@ class SubtitleEditor(QMainWindow):
             self.last_found_index = INITIAL_INDEX
 
     def highlight_search_term(self):
-        if search_text := self.search_entry.text().lower():
+        if search_text := self.SearchEntry_qLE.text().lower():
             fmt = QTextCharFormat()
             fmt.setBackground(QColor("#0078d4"))
             self.highlighter.clear_highlight()
             self.highlighter.highlight_word(search_text, fmt)
 
     def search_entry_changed(self):
-        if not self.search_entry.text():
+        if not self.SearchEntry_qLE.text():
             self.clear_highlight()
 
     def clear_highlight(self):
         self.highlighter.clear_highlight()
-        self.subtitle_text.setPlainText(self.subtitle_text.toPlainText())
+        self.SubtitleText_qPTE.setPlainText(self.SubtitleText_qPTE.toPlainText())
 
     def update_subtitle_text(self):
-        if 0 <= self.current_subtitle_index < len(self.subtitles):
-            self.subtitles[self.current_subtitle_index]["text"] = self.subtitle_text.toPlainText()
+        if 0 <= self.current_subtitle_index < len(self.subtitles_list):
+            self.subtitles_list[self.current_subtitle_index]["text"] = self.SubtitleText_qPTE.toPlainText()
             self.save_to_temp_file()
 
     def update_start_time(self):
-        if 0 <= self.current_subtitle_index < len(self.subtitles):
-            self.subtitles[self.current_subtitle_index]["start_time"] = self.start_time_entry.text()
+        if 0 <= self.current_subtitle_index < len(self.subtitles_list):
+            self.subtitles_list[self.current_subtitle_index]["start_time"] = self.StartTimeEntry_qLE.text()
             self.save_to_temp_file()
 
     def update_end_time(self):
-        if 0 <= self.current_subtitle_index < len(self.subtitles):
-            self.subtitles[self.current_subtitle_index]["end_time"] = self.end_time_entry.text()
+        if 0 <= self.current_subtitle_index < len(self.subtitles_list):
+            self.subtitles_list[self.current_subtitle_index]["end_time"] = self.EndTimeEntry_qLE.text()
             self.save_to_temp_file()
 
     def subtitle_text_wheel_event(self, event):
@@ -277,15 +285,15 @@ class SubtitleEditor(QMainWindow):
         if delta > 0:
             self.current_subtitle_index = max(0, self.current_subtitle_index + 1)
         elif delta < 0:
-            self.current_subtitle_index = min(len(self.subtitles) - 1, self.current_subtitle_index - 1)
+            self.current_subtitle_index = min(len(self.subtitles_list) - 1, self.current_subtitle_index - 1)
         self.display_subtitle()
         event.accept()
 
     def insert_em_dash(self):
-        self.subtitle_text.insertPlainText("— ")
+        self.SubtitleText_qPTE.insertPlainText("— ")
 
     def insert_elipsis(self):
-        self.subtitle_text.insertPlainText("…")
+        self.SubtitleText_qPTE.insertPlainText("…")
 
     def insert_eight_note(self):
         self.wrap_selected_text("♪ ", " ♪")
@@ -294,7 +302,7 @@ class SubtitleEditor(QMainWindow):
         self.wrap_selected_text("<i>", "</i>")
 
     def wrap_selected_text(self, start_char, end_char):
-        cursor = self.subtitle_text.textCursor()
+        cursor = self.SubtitleText_qPTE.textCursor()
         selected_text = cursor.selectedText()
         wrapped_text = f"{start_char}{selected_text}{end_char}"
         cursor.insertText(wrapped_text)
